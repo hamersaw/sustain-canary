@@ -1,0 +1,27 @@
+plugins {
+    id "application"
+    id "java"
+}
+
+version "0.1.0"
+
+application {
+    mainClass = "io.blackpine.dynspark.server.Main"
+    applicationDefaultJvmArgs = ["-Dorg.slf4j.simpleLogger.defaultLogLevel=info"]
+}
+
+def grpcVersion = "1.29.0"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":shared")
+
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation "org.apache.spark:spark-core_2.12:3.0.0"
+    implementation "org.apache.spark:spark-sql_2.12:3.0.0"
+    implementation "org.mongodb.spark:mongo-spark-connector_2.12:3.0.0"
+    implementation "org.slf4j:slf4j-simple:1.7.25"
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "io.blackpine.dynspark.protos";
+
+service DynSparkService {
+    rpc count(CountRequest) returns (CountResponse) {}
+}
+
+message CountRequest {
+    string database = 1;
+    string collection = 2;
+}
+
+message CountResponse {
+    int64 count = 1;
+}
