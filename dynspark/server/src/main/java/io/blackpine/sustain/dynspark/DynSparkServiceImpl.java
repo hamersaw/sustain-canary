@@ -1,7 +1,7 @@
-package io.blackpine.dynspark.server;
+package io.blackpine.sustain.dynspark;
 
-import io.blackpine.dynspark.protos.DynSparkServiceGrpc;
-import io.blackpine.dynspark.protos.Dynspark;
+import io.blackpine.sustain.dynspark.protos.DynSparkServiceGrpc;
+import io.blackpine.sustain.dynspark.protos.Dynspark;
 
 import com.mongodb.spark.MongoSpark;
 import com.mongodb.spark.config.ReadConfig;

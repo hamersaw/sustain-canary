@@ -1,21 +1,20 @@
-package io.blackpine.dynspark.server;
+package io.blackpine.sustain.dynspark;
 
-import io.blackpine.dynspark.server.DynSparkServiceImpl;
+import io.blackpine.sustain.dynspark.DynSparkServiceImpl;
 
-import io.grpc.Server;
 import io.grpc.ServerBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Main {
+public class Server {
     protected static final Logger log =
-        LoggerFactory.getLogger(Main.class);
+        LoggerFactory.getLogger(Server.class);
     protected static final int PORT = 15605;
 
     public static void main(String[] args) {
         // initailize server
-        Server server = ServerBuilder.forPort(PORT)
+        io.grpc.Server server = ServerBuilder.forPort(PORT)
             .addService(new DynSparkServiceImpl())
             .build();
 

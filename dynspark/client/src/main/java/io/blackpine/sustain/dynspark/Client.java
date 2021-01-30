@@ -1,12 +1,12 @@
-package io.blackpine.dynspark.client;
+package io.blackpine.sustain.dynspark;
 
-import io.blackpine.dynspark.protos.Dynspark;
-import io.blackpine.dynspark.protos.DynSparkServiceGrpc;
+import io.blackpine.sustain.dynspark.protos.Dynspark;
+import io.blackpine.sustain.dynspark.protos.DynSparkServiceGrpc;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-public class Main {
+public class Client {
     protected static final int PORT = 15605;
 
     public static void main(String[] args) {

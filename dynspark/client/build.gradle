@@ -1,23 +1,25 @@
 plugins {
-    id "application"
     id "java"
 }
 
-version "0.1.0"
-
-application {
-    mainClass = "io.blackpine.dynspark.client.Main"
-}
-
-def grpcVersion = "1.29.0"
-
 repositories {
-    mavenCentral()
+    jcenter()
 }
+
+apply from: '../dependencies.gradle'
 
 dependencies {
-    implementation project(":shared")
+    implementation project(':shared')
 
+    //implementation "com.google.protobuf:protobuf-java:${pbVersion}"
     implementation "io.grpc:grpc-netty:${grpcVersion}"
-    implementation "org.slf4j:slf4j-simple:1.7.25"
+
+    //testImplementation 'junit:junit:4.13'
 }
+
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into file("$buildDir/libs")
+}
+
+build.dependsOn copyDependencies

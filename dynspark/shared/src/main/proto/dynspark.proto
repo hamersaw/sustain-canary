@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option java_package = "io.blackpine.dynspark.protos";
+option java_package = "io.blackpine.sustain.dynspark.protos";
 
 service DynSparkService {
     rpc count(CountRequest) returns (CountResponse) {}
