@@ -3,13 +3,22 @@
 High-level repo to test codebases for project sustain
 
 ## dynspark
-A gRPC framework for executing Apache Spark jobs over MongoDB
+A grpc framework for executing Apache Spark jobs over MongoDB
 ### build
     gradle :server:build
     gradle :client:build
 ### run
     java -cp "server/build/libs/*" io.blackpine.sustain.dynspark.Server
     java -cp "client/build/libs/*" io.blackpine.sustain.dynspark.Client foo bar
+
+## grpc-json-relay
+An example using a JsonRelayServer to allow json formatted grpc requests / responses
+### build
+    gradle :server:build
+    gradle :client:build
+### run
+    java -cp "server/build/libs/*" io.blackpine.sustain.grpcJsonRelay.Server
+    java -cp "client/build/libs/*" io.blackpine.sustain.grpcJsonRelay.Client foo bar
 
 ## resources
 - [mongodb spark connector](https://docs.mongodb.com/spark-connector/master/java-api)
