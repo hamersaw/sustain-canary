@@ -19,14 +19,17 @@ public class SustainServiceImpl
         log.info("received query [msg='" + request.getMsg() + "']");
 
         try {
-            // initailize response
-            GrpcJsonRelay.EchoResponse response =
-                GrpcJsonRelay.EchoResponse.newBuilder()
-                    .setMsg(request.getMsg())
-                    .build();
+            for (int i=0; i<request.getCount(); i++) {
+                // initailize response
+                GrpcJsonRelay.EchoResponse response =
+                    GrpcJsonRelay.EchoResponse.newBuilder()
+                        .setMsg(request.getMsg())
+                        .build();
 
-            // send response
-            responseObserver.onNext(response);
+                // send response
+                responseObserver.onNext(response);
+            }
+
             responseObserver.onCompleted();
         } catch (Exception e) {
             log.error("failed to evaluate count", e);

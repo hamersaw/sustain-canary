@@ -3,6 +3,8 @@ package io.blackpine.sustain.grpcJsonRelay;
 import io.blackpine.sustain.grpcJsonRelay.protos.GrpcJsonRelay;
 import io.blackpine.sustain.grpcJsonRelay.protos.JsonRelayServiceGrpc;
 
+import java.util.Iterator;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
@@ -11,8 +13,8 @@ public class Client {
 
     public static void main(String[] args) {
         // validate arguments
-        if (args.length != 1) {
-            System.out.println("Usage: ./APP <msg>");
+        if (args.length != 2) {
+            System.out.println("Usage: ./APP <msg> <count>");
             System.exit(1);
         }
 
@@ -30,14 +32,21 @@ public class Client {
         GrpcJsonRelay.JsonRequest request =
             GrpcJsonRelay.JsonRequest.newBuilder()
                 .setMethod("sustain.echo")
-                .setJson("{\"msg\" : \"" + args[0]  + "\"}")
+                .setJson("{\"msg\" : \"" + args[0]  + "\","
+                    + "\"count\" : " + args[1] + "}")
                 .build();
 
         // send request
-        GrpcJsonRelay.JsonResponse response =
+        Iterator<GrpcJsonRelay.JsonResponse> iterator =
             blockingStub.request(request);
         
-        // print response
-        System.out.println("message: '" + response.getJson() + "'");
+        while (iterator.hasNext()) {
+            GrpcJsonRelay.JsonResponse response = iterator.next();
+
+            // print response
+            System.out.println("message: '" + response.getJson() + "'");
+        }
+
+        channel.shutdownNow();
     }
 }

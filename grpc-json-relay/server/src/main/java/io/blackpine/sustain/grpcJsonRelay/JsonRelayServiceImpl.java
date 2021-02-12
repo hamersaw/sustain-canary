@@ -7,6 +7,8 @@ import io.blackpine.sustain.grpcJsonRelay.protos.SustainServiceGrpc;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 
+import java.util.Iterator;
+
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -33,10 +35,6 @@ public class JsonRelayServiceImpl
                 .usePlaintext()
                 .build();
 
-            // initailize response
-            GrpcJsonRelay.JsonResponse.Builder responseBuilder =
-                GrpcJsonRelay.JsonResponse.newBuilder();
-
             // convert json to protobuf and service request
             JsonFormat.Parser parser = JsonFormat.parser();
             JsonFormat.Printer printer = JsonFormat.printer();
@@ -44,7 +42,6 @@ public class JsonRelayServiceImpl
             Message message = null;
             switch (request.getMethod()) {
                 case "sustain.echo":
-                    // build EchoRequest
                     GrpcJsonRelay.EchoRequest.Builder requestBuilder =
                         GrpcJsonRelay.EchoRequest.newBuilder();
                     parser.merge(request.getJson(), requestBuilder);
@@ -53,12 +50,23 @@ public class JsonRelayServiceImpl
                     SustainServiceGrpc.SustainServiceBlockingStub blockingStub =
                         SustainServiceGrpc.newBlockingStub(channel);
 
-                    GrpcJsonRelay.EchoResponse response =
+                    Iterator<GrpcJsonRelay.EchoResponse> iterator =
                         blockingStub.echo(requestBuilder.build());
 
-                    // set response
-                    String json = printer.print(response);
-                    responseBuilder.setJson(json);
+                    while (iterator.hasNext()) {
+                        GrpcJsonRelay.EchoResponse response =
+                            iterator.next();
+
+                        // build JsonRequest
+                        String json = printer.print(response);
+                        GrpcJsonRelay.JsonResponse jsonResponse =
+                            GrpcJsonRelay.JsonResponse.newBuilder()
+                                .setJson(json)
+                                .build();
+
+                        responseObserver.onNext(jsonResponse);
+                    }
+
                     break;
                 default:
                     throw new Exception("unsupported method '"
@@ -66,8 +74,8 @@ public class JsonRelayServiceImpl
             }
 
             // send response
-            responseObserver.onNext(responseBuilder.build());
             responseObserver.onCompleted();
+            channel.shutdownNow();
         } catch (Exception e) {
             log.error("failed to evaluate", e);
             responseObserver.onError(e);

@@ -18,7 +18,7 @@ An example using a JsonRelayServer to allow json formatted grpc requests / respo
     gradle :client:build
 ### run
     java -cp "server/build/libs/*" io.blackpine.sustain.grpcJsonRelay.Server
-    java -cp "client/build/libs/*" io.blackpine.sustain.grpcJsonRelay.Client foo bar
+    java -cp "client/build/libs/*" io.blackpine.sustain.grpcJsonRelay.Client foo 4
 
 ## resources
 - [mongodb spark connector](https://docs.mongodb.com/spark-connector/master/java-api)
