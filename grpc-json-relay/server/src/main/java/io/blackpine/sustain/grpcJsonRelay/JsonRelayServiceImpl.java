@@ -27,9 +27,11 @@ public class JsonRelayServiceImpl
         log.info("received request [method='"
             + request.getMethod() + "']");
 
+        ManagedChannel channel = null;
+
         try {
             // open grpc channel
-            ManagedChannel channel = ManagedChannelBuilder
+            channel = ManagedChannelBuilder
                 .forAddress("127.0.0.1",
                     io.blackpine.sustain.grpcJsonRelay.Server.PORT)
                 .usePlaintext()
@@ -75,10 +77,13 @@ public class JsonRelayServiceImpl
 
             // send response
             responseObserver.onCompleted();
-            channel.shutdownNow();
         } catch (Exception e) {
             log.error("failed to evaluate", e);
             responseObserver.onError(e);
+        } finally {
+            if (channel != null) {
+                channel.shutdownNow();
+            }
         }
     }
 }

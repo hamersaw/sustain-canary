@@ -19,11 +19,36 @@ service SustainService {
     rpc echo(EchoRequest) returns (stream EchoResponse) {}
 }
 
+enum EchoType {
+    LOWER = 0;
+    UPPER = 1;
+}
+
 message EchoRequest {
-    int32 count = 1;
-    string msg = 2;
+    EchoType type = 1;
+    LowerEchoRequest lowerEchoRequest = 2;
+    UpperEchoRequest upperEchoRequest = 3;
+    int32 count = 4;
 }
 
 message EchoResponse {
+    EchoType type = 1;
+    LowerEchoResponse lowerEchoResponse = 2;
+    UpperEchoResponse upperEchoResponse = 3;
+}
+
+message LowerEchoRequest {
+    string msg = 2;
+}
+
+message LowerEchoResponse {
+    string msg = 1;
+}
+
+message UpperEchoRequest {
+    string msg = 2;
+}
+
+message UpperEchoResponse {
     string msg = 1;
 }

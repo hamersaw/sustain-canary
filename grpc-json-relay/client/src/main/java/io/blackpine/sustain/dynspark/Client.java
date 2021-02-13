@@ -28,12 +28,35 @@ public class Client {
         JsonRelayServiceGrpc.JsonRelayServiceBlockingStub blockingStub =
             JsonRelayServiceGrpc.newBlockingStub(channel);
 
+        String json = "{"
+                + "\"type\":\"LOWER\","
+                + "\"lowerEchoRequest\":{"
+                    + "\"msg\":\"" + args[0] + "\""
+                + "},"
+                + "\"count\":" + args[1]
+            + "}";
+
+        /*String json = "{"
+                + "\"type\":\"UPPER\","
+                + "\"upperEchoRequest\":{"
+                    + "\"msg\":\"" + args[0] + "\""
+                + "},"
+                + "\"count\":" + args[1]
+            + "}";*/
+
+        /*String json = "{"
+                + "\"type\":\"BROKEN\","
+                + "\"upperEchoRequest\":{"
+                    + "\"msg\":\"" + args[0] + "\""
+                + "},"
+                + "\"count\":" + args[1]
+            + "}";*/
+
         // initialize request
         GrpcJsonRelay.JsonRequest request =
             GrpcJsonRelay.JsonRequest.newBuilder()
                 .setMethod("sustain.echo")
-                .setJson("{\"msg\" : \"" + args[0]  + "\","
-                    + "\"count\" : " + args[1] + "}")
+                .setJson(json)
                 .build();
 
         // send request
