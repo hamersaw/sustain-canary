@@ -22,10 +22,9 @@ public class JsonRelayServiceImpl
         LoggerFactory.getLogger(JsonRelayServiceGrpc.class);
 
     @Override
-    public void request(GrpcJsonRelay.JsonRequest request,
-            StreamObserver<GrpcJsonRelay.JsonResponse> responseObserver) {
-        log.info("received request [method='"
-            + request.getMethod() + "']");
+    public void echo(GrpcJsonRelay.JsonEchoRequest request,
+            StreamObserver<GrpcJsonRelay.JsonEchoResponse> responseObserver) {
+        log.info("received request [json='" + request.getJson() + "']");
 
         ManagedChannel channel = null;
 
@@ -39,40 +38,35 @@ public class JsonRelayServiceImpl
 
             // convert json to protobuf and service request
             JsonFormat.Parser parser = JsonFormat.parser();
-            JsonFormat.Printer printer = JsonFormat.printer();
+            JsonFormat.Printer printer = JsonFormat.printer()
+                .includingDefaultValueFields()
+                .omittingInsignificantWhitespace();
 
-            Message message = null;
-            switch (request.getMethod()) {
-                case "sustain.echo":
-                    GrpcJsonRelay.EchoRequest.Builder requestBuilder =
-                        GrpcJsonRelay.EchoRequest.newBuilder();
-                    parser.merge(request.getJson(), requestBuilder);
+            // create echo request
+            GrpcJsonRelay.EchoRequest.Builder requestBuilder =
+                GrpcJsonRelay.EchoRequest.newBuilder();
+            parser.merge(request.getJson(), requestBuilder);
 
-                    // issue echo request
-                    SustainServiceGrpc.SustainServiceBlockingStub blockingStub =
-                        SustainServiceGrpc.newBlockingStub(channel);
+            // issue echo request
+            SustainServiceGrpc.SustainServiceBlockingStub blockingStub =
+                SustainServiceGrpc.newBlockingStub(channel);
 
-                    Iterator<GrpcJsonRelay.EchoResponse> iterator =
-                        blockingStub.echo(requestBuilder.build());
+            Iterator<GrpcJsonRelay.EchoResponse> iterator =
+                blockingStub.echo(requestBuilder.build());
 
-                    while (iterator.hasNext()) {
-                        GrpcJsonRelay.EchoResponse response =
-                            iterator.next();
+            // iterate over results
+            while (iterator.hasNext()) {
+                GrpcJsonRelay.EchoResponse response =
+                    iterator.next();
 
-                        // build JsonRequest
-                        String json = printer.print(response);
-                        GrpcJsonRelay.JsonResponse jsonResponse =
-                            GrpcJsonRelay.JsonResponse.newBuilder()
-                                .setJson(json)
-                                .build();
+                // build JsonRequest
+                String json = printer.print(response);
+                GrpcJsonRelay.JsonEchoResponse jsonResponse =
+                    GrpcJsonRelay.JsonEchoResponse.newBuilder()
+                        .setJson(json)
+                        .build();
 
-                        responseObserver.onNext(jsonResponse);
-                    }
-
-                    break;
-                default:
-                    throw new Exception("unsupported method '"
-                        + request.getMethod() + "'");
+                responseObserver.onNext(jsonResponse);
             }
 
             // send response

@@ -3,15 +3,14 @@ syntax = "proto3";
 option java_package = "io.blackpine.sustain.grpcJsonRelay.protos";
 
 service JsonRelayService {
-    rpc request(JsonRequest) returns (stream JsonResponse) {}
+    rpc echo(JsonEchoRequest) returns (stream JsonEchoResponse) {}
 }
 
-message JsonRequest {
+message JsonEchoRequest {
     string json = 1;
-    string method = 2;
 }
 
-message JsonResponse {
+message JsonEchoResponse {
     string json = 1;
 }
 

@@ -53,21 +53,20 @@ public class Client {
             + "}";*/
 
         // initialize request
-        GrpcJsonRelay.JsonRequest request =
-            GrpcJsonRelay.JsonRequest.newBuilder()
-                .setMethod("sustain.echo")
+        GrpcJsonRelay.JsonEchoRequest request =
+            GrpcJsonRelay.JsonEchoRequest.newBuilder()
                 .setJson(json)
                 .build();
 
         // send request
-        Iterator<GrpcJsonRelay.JsonResponse> iterator =
-            blockingStub.request(request);
+        Iterator<GrpcJsonRelay.JsonEchoResponse> iterator =
+            blockingStub.echo(request);
         
         while (iterator.hasNext()) {
-            GrpcJsonRelay.JsonResponse response = iterator.next();
+            GrpcJsonRelay.JsonEchoResponse response = iterator.next();
 
             // print response
-            System.out.println("message: '" + response.getJson() + "'");
+            System.out.println(response.getJson());
         }
 
         channel.shutdownNow();
