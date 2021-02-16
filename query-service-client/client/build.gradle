@@ -1,0 +1,22 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    jcenter()
+}
+
+apply from: '../dependencies.gradle'
+
+dependencies {
+    implementation project(':shared')
+
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into file("$buildDir/libs")
+}
+
+build.dependsOn copyDependencies
