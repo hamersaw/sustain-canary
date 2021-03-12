@@ -1,0 +1,58 @@
+package io.blackpine.sustain.queryServiceClient;
+
+import org.sustain.JsonModelRequest;
+import org.sustain.JsonModelResponse;
+import org.sustain.JsonProxyGrpc;
+
+import java.util.Iterator;
+
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+
+public class Client {
+    protected static final int PORT = 50051;
+
+    public static void main(String[] args) {
+        // validate arguments
+        if (args.length != 1) {
+            System.out.println("Usage: ./APP <count>");
+            System.exit(1);
+        }
+
+        // open grpc channel
+        ManagedChannel channel = ManagedChannelBuilder
+            .forAddress("127.0.0.1", PORT)
+            .usePlaintext()
+            .build();
+
+        // initialize blocking stub
+        JsonProxyGrpc.JsonProxyBlockingStub blockingStub =
+            JsonProxyGrpc.newBlockingStub(channel);
+
+        String json = "{"
+                + "\"type\":\"KMeansClustering\","
+                + "\"kMeansClusteringRequest\":{"
+                    + "\"clusterCount\":\"" + args[0] + "\""
+                + "}"
+            + "}";
+
+        // initialize request
+        JsonModelRequest request =
+            JsonModelRequest.newBuilder()
+                .setJson(json)
+                .build();
+
+        // send request
+        Iterator<JsonModelResponse> iterator =
+            blockingStub.modelQuery(request);
+        
+        while (iterator.hasNext()) {
+            JsonModelResponse response = iterator.next();
+
+            // print response
+            //System.out.println(response.getJson());
+        }
+
+        channel.shutdownNow();
+    }
+}
