@@ -23,6 +23,11 @@ public class ConcurrentSparkServiceImpl
         extends ConcurrentSparkServiceGrpc.ConcurrentSparkServiceImplBase {
     protected static final Logger log =
         LoggerFactory.getLogger(ConcurrentSparkServiceGrpc.class);
+    protected SparkService sparkService;
+
+    public ConcurrentSparkServiceImpl(SparkService sparkService) {
+        this.sparkService = sparkService;
+    }
 
     @Override
     public void count(Concurrentspark.CountRequest request,
@@ -31,7 +36,7 @@ public class ConcurrentSparkServiceImpl
             + "', collection='" + request.getCollection() + "']");
 
         try {
-            // open spark session - TODO fix hardcoded values
+            /*// open spark session - TODO fix hardcoded values
             SparkSession sparkSession = SparkSession.builder()
                 .master("spark://nightcrawler:7077")
                 .config("spark.mongodb.input.uri",
@@ -72,7 +77,7 @@ public class ConcurrentSparkServiceImpl
                     .build();
 
             // send response
-            responseObserver.onNext(response);
+            responseObserver.onNext(response);*/
             responseObserver.onCompleted();
         } catch (Exception e) {
             log.error("failed to evaluate count", e);

@@ -13,9 +13,13 @@ public class Server {
     protected static final int PORT = 15605;
 
     public static void main(String[] args) {
-        // initailize server
+        // initialize SparkService
+        SparkService sparkService =
+            new SparkService("spark://nightcrawler:7077", 2);
+
+        // initialize server
         io.grpc.Server server = ServerBuilder.forPort(PORT)
-            .addService(new ConcurrentSparkServiceImpl())
+            .addService(new ConcurrentSparkServiceImpl(sparkService))
             .build();
 
         // start server
