@@ -1,0 +1,27 @@
+plugins {
+    id "java"
+}
+
+repositories {
+    jcenter()
+}
+
+apply from: '../dependencies.gradle'
+
+dependencies {
+    implementation project(':shared')
+
+    implementation "com.google.protobuf:protobuf-java:${protobufVersion}"
+    implementation "io.grpc:grpc-netty:${grpcVersion}"
+    implementation "org.apache.spark:spark-core_2.12:3.0.0"
+    implementation "org.apache.spark:spark-sql_2.12:3.0.0"
+    implementation "org.mongodb.spark:mongo-spark-connector_2.12:3.0.0"
+    implementation "org.slf4j:slf4j-simple:1.7.25"
+}
+
+task copyDependencies(type: Copy) {
+    from configurations.runtimeClasspath
+    into file("$buildDir/libs")
+}
+
+build.dependsOn copyDependencies
