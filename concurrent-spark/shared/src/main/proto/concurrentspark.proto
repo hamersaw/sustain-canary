@@ -3,7 +3,15 @@ syntax = "proto3";
 option java_package = "io.blackpine.sustain.concurrentSpark.protos";
 
 service ConcurrentSparkService {
+    rpc exception(ExceptionRequest) returns (ExceptionResponse) {}
+    rpc cancel(CountRequest) returns (CountResponse) {}
     rpc count(CountRequest) returns (CountResponse) {}
+}
+
+message ExceptionRequest {
+}
+
+message ExceptionResponse {
 }
 
 message CountRequest {

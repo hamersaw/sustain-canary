@@ -17,6 +17,10 @@ public class Server {
         SparkService sparkService =
             new SparkService("spark://nightcrawler:7077", 2);
 
+        sparkService.addJar("server/build/libs/mongo-spark-connector_2.12-3.0.0.jar");
+        sparkService.addJar("server/build/libs/bson-4.0.5.jar");
+        sparkService.addJar("server/build/libs/mongo-java-driver-3.12.8.jar");
+
         // initialize server
         io.grpc.Server server = ServerBuilder.forPort(PORT)
             .addService(new ConcurrentSparkServiceImpl(sparkService))

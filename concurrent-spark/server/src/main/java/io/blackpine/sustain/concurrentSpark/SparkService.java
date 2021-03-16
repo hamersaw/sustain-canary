@@ -5,6 +5,9 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SparkSession;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
@@ -12,21 +15,44 @@ import java.util.concurrent.Future;
 
 public class SparkService {
     protected ExecutorService executorService; 
+    protected List<String> jars;
     private String sparkMaster;
 
     public SparkService(String sparkMaster, int threadCount) {
         this.sparkMaster = sparkMaster;
+        this.jars = new ArrayList();
         this.executorService = Executors.newFixedThreadPool(threadCount);
     }
 
-    private SparkSession initSparkSession() throws Exception {
+    public void addJar(String jar) {
+        this.jars.add(jar);
+    }
+
+    protected void cancel(String jobGroup) throws Exception {
+        // initialize spark session
+        SparkSession sparkSession = getOrCreateSparkSession();
+        JavaSparkContext sparkContext = 
+            new JavaSparkContext(sparkSession.sparkContext());
+
+        // cancel job group
+        sparkContext.cancelJobGroup(jobGroup);
+    }
+
+    protected SparkSession getOrCreateSparkSession() throws Exception {
+        // get or create SparkSession
         SparkSession sparkSession = SparkSession.builder()
             .master(this.sparkMaster)
             .appName("ConcurrentSpark")
             .getOrCreate();
 
-        // TODO - if they don't exist - add JARs to SparkContext
-        // if (!sparkContext.jars.contains(...)) {...}
+        // if they don't exist - add JARs to SparkContext
+        JavaSparkContext sparkContext =
+            new JavaSparkContext(sparkSession.sparkContext());
+        for (String jar : this.jars) {
+            if (!sparkContext.jars().contains(jar)) {
+                sparkContext.addJar(jar);
+            }
+        }
 
         return sparkSession;
     }
@@ -35,7 +61,7 @@ public class SparkService {
             String jobGroup) throws Exception {
         Future<T> future = this.executorService.submit(() -> {
             // initialize spark session
-            SparkSession sparkSession = initSparkSession();
+            SparkSession sparkSession = getOrCreateSparkSession();
             JavaSparkContext sparkContext = 
                 new JavaSparkContext(sparkSession.sparkContext());
 
@@ -46,7 +72,7 @@ public class SparkService {
             try {
                 // execute spark task
                 return sparkTask.execute(sparkContext);
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 // if this callable is interrupted
                 // -> cancel spark jobs for this group
                 sparkContext.cancelJobGroup(jobGroup);

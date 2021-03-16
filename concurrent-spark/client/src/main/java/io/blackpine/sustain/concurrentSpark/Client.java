@@ -27,17 +27,26 @@ public class Client {
             ConcurrentSparkServiceGrpc.newBlockingStub(channel);
 
         // initialize request
-        Concurrentspark.CountRequest request =
+        /*Concurrentspark.CountRequest request =
             Concurrentspark.CountRequest.newBuilder()
                 .setDatabase(args[0])
                 .setCollection(args[1])
+                .build();*/
+
+        Concurrentspark.ExceptionRequest request =
+            Concurrentspark.ExceptionRequest.newBuilder()
                 .build();
 
         // send request
-        Concurrentspark.CountResponse response =
-            blockingStub.count(request);
+        //Concurrentspark.CountResponse response =
+        //    blockingStub.count(request);
+        //Concurrentspark.CountResponse response =
+        //    blockingStub.cancel(request);
+
+        Concurrentspark.ExceptionResponse response =
+            blockingStub.exception(request);
         
         // print response
-        System.out.println("COUNT: " + response.getCount());
+        //System.out.println("COUNT: " + response.getCount());
     }
 }
